@@ -37,4 +37,9 @@ public class Cart {
 	@ToString.Exclude
 	@JsonIgnore
 	private User user;
+	
+	@Column(name = "product_id", nullable = false)
+	private int product_id;
+	
+	
 }

@@ -7,7 +7,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
 
 @io.swagger.v3.oas.annotations.OpenAPIDefinition(
 		info=@Info(
-				title = "order-service",description = "",summary = "",termsOfService = "T$C",
+				title = "product-service",description = "",summary = "",termsOfService = "HHH",
 				contact =@Contact(
 					name="vo quang huy",
 							email="voquanghuy08102000@gmail.com"

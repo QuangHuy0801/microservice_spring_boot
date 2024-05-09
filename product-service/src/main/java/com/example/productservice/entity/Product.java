@@ -70,5 +70,7 @@ public class Product {
 	
 	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
 	private List<ProductImage> productImage;
+	@OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+	private List<Promotion_Item> promotion_Item;
 
 }

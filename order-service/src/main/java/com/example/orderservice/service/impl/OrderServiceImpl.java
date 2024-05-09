@@ -25,7 +25,7 @@ public class OrderServiceImpl implements OrderService{
 	@Autowired
 	OrderRepository orderRepository;
 	@Autowired
-	WebClient webClient;
+	private final WebClient.Builder webClientBuilder;
 	
 	@Override
 	public String createOrder(OrderRequest orderRequest) {
@@ -45,17 +45,24 @@ public class OrderServiceImpl implements OrderService{
 	            .build();
 
 	    try {
-	        Boolean userExists = webClient.get()
-	                .uri(uriBuilder -> uriBuilder
-	                        .scheme("http")
-	                        .host("localhost")
-	                        .port(8083)
-	                        .path("/api/user/findbyid")
-	                        .queryParam("id", orderRequest.getUser_id())
-	                        .build())
-	                .retrieve()
-	                .bodyToMono(Boolean.class)
-	                .block();
+//	        Boolean userExists = webClient.get()
+//	                .uri(uriBuilder -> uriBuilder
+//	                        .scheme("http")
+//	                        .host("localhost")
+//	                        .port(8083)
+//	                        .path("/api/user/findbyid")
+//	                        .queryParam("id", orderRequest.getUser_id())
+//	                        .build())
+//	                .retrieve()
+//	                .bodyToMono(Boolean.class)
+//	                .block();
+	        
+	        Boolean userExists = webClientBuilder.build().get()
+            .uri("http://user-service/api/user/findbyid",
+                    uriBuilder -> uriBuilder.queryParam("id", orderRequest.getUser_id()).build())
+            .retrieve()
+            .bodyToMono(Boolean.class)
+            .block();
 
 	        if (userExists != null && userExists) {
 	            orderRepository.save(order);
@@ -97,42 +104,46 @@ public class OrderServiceImpl implements OrderService{
 	}
 	
 	
+	//Main
 
-//	@Autowired
-//	OrderRepository orderRepository;
-//	@Override
-//	public Order saveOrder(Order order) {
-//		return orderRepository.save(order);
-//	}
-//	@Override
-//	public List<Order> getAllOrderByUser_Id(String id) {
-//		// TODO Auto-generated method stub
-//		return orderRepository.findAllByUser_id(id);
-//	}
-//	@Override
-//	public Order findById(int id) {
-//		return orderRepository.findById(id);
-//	}
-//	@Override
-//	public List<Order> findAll() {
-//		return orderRepository.findAll();
-//	}
-//	@Override
-//	public Page<Order> findAll(Pageable pageable) {
-//		return orderRepository.findAll(pageable);
-//	}
-//	@Override
-//	public void deleteById(int id) {
-//		orderRepository.deleteById(id);
-//	}
-//	@Override
-//	public List<Order> findAllByPayment_Method(String payment_Method, String user_id) {
-//		return orderRepository.findAllByPayment_Method(payment_Method, user_id);
-//	}
-//	
-//	@Override
-//	public List<Order> findAllByPayment_Method(String payment_Method) {
-//		return orderRepository.findAllByPayment_Method(payment_Method);
-//	}
+	@Override
+	public Order saveOrder(Order order) {
+		return orderRepository.save(order);
+	}
+	@Override
+	public List<Order> getAllOrderByUser_Id(String id) {
+		// TODO Auto-generated method stub
+		return orderRepository.findAllByUser_id(id);
+	}
+	@Override
+	public Order findById(int id) {
+		return orderRepository.findById(id);
+	}
+	@Override
+	public List<Order> findAll() {
+		return orderRepository.findAll();
+	}
+	@Override
+	public Page<Order> findAll(Pageable pageable) {
+		return orderRepository.findAll(pageable);
+	}
+	@Override
+	public void deleteById(int id) {
+		orderRepository.deleteById(id);
+	}
+	@Override
+	public List<Order> findAllByPayment_Method(String payment_Method, String user_id) {
+		return orderRepository.findAllByPayment_Method(payment_Method, user_id);
+	}
+	
+	@Override
+	public List<Order> findAllByPayment_Method(String payment_Method) {
+		return orderRepository.findAllByPayment_Method(payment_Method);
+	}
+	@Override
+	public List<Order> filterByStatus(String status) {
+		return orderRepository.filterByStatus(status);
+	}
+
 
 }

@@ -15,19 +15,20 @@ public interface OrderService {
 	
 	List<OrderResponse> getAllOrder();
 
-//	public Order saveOrder(Order order);
-//	
-//	List<Order> getAllOrderByUser_Id(String id);
-//
-//	Order findById(int id);
-//
-//	List<Order> findAll();
-//
-//	Page<Order> findAll(Pageable pageable);
-//
-//	void deleteById(int id);
-//
-//	List<Order> findAllByPayment_Method(String payment_Method, String user_id);
-//
-//	List<Order> findAllByPayment_Method(String payment_Method);
+	public Order saveOrder(Order order);
+	
+	List<Order> getAllOrderByUser_Id(String id);
+
+	Order findById(int id);
+
+	List<Order> findAll();
+
+	Page<Order> findAll(Pageable pageable);
+
+	void deleteById(int id);
+
+	List<Order> findAllByPayment_Method(String payment_Method, String user_id);
+
+	List<Order> findAllByPayment_Method(String payment_Method);
+	List<Order> filterByStatus(String status);
 }

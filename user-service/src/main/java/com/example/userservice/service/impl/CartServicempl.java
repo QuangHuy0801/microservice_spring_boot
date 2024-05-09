@@ -4,17 +4,24 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import com.example.userservice.entity.Cart;
 import com.example.userservice.repository.CartRepository;
 import com.example.userservice.service.CartService;
 
+import lombok.extern.slf4j.Slf4j;
+
 
 @Service
+@Slf4j
 public class CartServicempl implements CartService{
 
 	@Autowired
 	CartRepository cartRepository;
+	
+	@Autowired
+	WebClient.Builder webClientBuilder;
 	/**
 	 *
 	 */
@@ -30,8 +37,24 @@ public class CartServicempl implements CartService{
 	}
 	@Override
 	public Cart saveCart(Cart cart) {
-		// TODO Auto-generated method stub
-		return cartRepository.save(cart);
+		  try {        
+		        Boolean productExists = webClientBuilder.build().get()
+	            .uri("http://product-service/api/product/findbyid",
+	                    uriBuilder -> uriBuilder.queryParam("id", cart.getProduct_id()).build())
+	            .retrieve()
+	            .bodyToMono(Boolean.class)
+	            .block();
+
+		        if (productExists != null && productExists) {
+		            return cartRepository.save(cart);
+		        } else {
+		            log.error("Product does not exist.");
+		            return null;
+		        }
+		    } catch (Exception e) {
+		        log.error("Error while checking product existence: {}", e.getMessage());
+		        throw new IllegalArgumentException("Error occurred while checking product existence");
+		    }
 	}
 	@Override
 	public int getProductByCartId(int cart_id) {

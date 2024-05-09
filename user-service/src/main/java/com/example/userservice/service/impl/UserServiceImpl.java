@@ -43,7 +43,7 @@ public class UserServiceImpl implements UserService{
 		userRepository.save(user);
 	}
 	@Override
-	public List<UserResponse> getAllUser() {
+	public List<UserResponse> getAllUserTest() {
 		List<User> users = userRepository.findAll();
 		return users.stream().map(user-> mapToUserResponse(user)).toList();
 	}
@@ -60,10 +60,57 @@ public class UserServiceImpl implements UserService{
 				.user_Name(user.getUser_Name())
 				.build();
 	}
+	//main
 	
+    @Override
+    public Optional<User> findbyid(String id) {
+        return userRepository.findById(id);
+    }
+	
+	public UserServiceImpl(UserRepository userRepository) {
+		super();
+		this.userRepository=userRepository;
+	}
 	@Override
-	public Optional<User> findbyid(String id) {
-		return userRepository.findById(id);
+	public List<User> getAllUser() {
+		// TODO Auto-generated method stub
+		return userRepository.findAll();
+	}
+
+	@Override
+	public User saveUser(User user) {
+		
+		
+		return userRepository.save(user);
+	}
+
+	@Override
+	public User updateUser(User user) {
+		// TODO Auto-generated method stub
+		return userRepository.save(user);
+	}
+
+	@Override
+	public void deleteUserById(String id) {
+		// TODO Auto-generated method stub
+		userRepository.deleteById(id);
+	}
+	@Override
+	public User GetUserByEmail(String email) {
+		// TODO Auto-generated method stub
+		return userRepository.findByEmail(email);
+	}
+	@Override
+	public User findByIdAndRole(String id, String role) {
+		return userRepository.findByIdAndRole(id, role);
+	}
+	@Override
+	public List<User> findAll() {
+		return userRepository.findAll();
+	}
+	@Override
+	public List<User> findByRole(String role) {
+		return userRepository.findByRole(role);
 	}
 
 	

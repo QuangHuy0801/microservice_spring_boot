@@ -5,10 +5,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,12 +21,17 @@ import org.springframework.web.bind.annotation.RestController;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import lombok.RequiredArgsConstructor;
+
+import com.example.orderservice.dto.OrderDto;
 import com.example.orderservice.dto.OrderRequest;
 import com.example.orderservice.dto.OrderResponse;
+import com.example.orderservice.dto.Order_ItemDto;
+import com.example.orderservice.dto.ProductDto;
 import com.example.orderservice.entity.Order;
 import com.example.orderservice.entity.Order_Item;
 import com.example.orderservice.service.OrderService;
 import com.example.orderservice.service.Order_ItemService;
+import com.example.orderservice.service.ProductServiceClient;
 
 @RestController
 @RequestMapping("api/order")
@@ -50,4 +58,177 @@ public class OrderController {
 	public List<OrderResponse> GetAllOrder() {
 		return orderService.getAllOrder();
 	}
+	
+	//Main
+	
+	@Autowired
+    private ModelMapper modelMapper;
+	
+	@Autowired
+	ProductServiceClient productServiceClient;
+	
+//	@PostMapping(path = "/placeorder", consumes = "application/x-www-form-urlencoded")
+//	public ResponseEntity<Order> placeOrder(String user_id, String fullname, String phoneNumber, String address, String paymentMethod){
+//		List<Cart> listCart = cartService.GetAllCartByUser_id(user_id);
+//		Order newOrder = new Order();
+//		User user = userService.findByIdAndRole(user_id, "user");
+//		long millis = System.currentTimeMillis();
+//		Date booking_date = new java.sql.Date(millis);
+//		int total=0;
+//		for(Cart y: listCart) {
+//			Promotion promotion = promotionService.getPromotionByProductId(y.getProduct().getId());
+//			if (promotion != null) {
+//				int PriceDiscount = y.getProduct().getPrice() - (int)(y.getProduct().getPrice() * promotion.getDiscountPercent());
+//				total += y.getCount() * PriceDiscount;
+//			}
+//			else {
+//				total += y.getProduct().getPrice() * y.getCount();
+//			}
+//		}
+//		newOrder.setUser(user);
+//		newOrder.setFullname(fullname);
+//		newOrder.setBooking_Date(booking_date);
+//		newOrder.setCountry("Việt Nam");
+//		newOrder.setEmail(user.getEmail());
+//		newOrder.setPayment_Method(paymentMethod);
+//		newOrder.setAddress(address);
+//		newOrder.setNote(null);
+//		newOrder.setPhone(phoneNumber);
+//		newOrder.setStatus("Pending");
+//		newOrder.setTotal(total);
+//		
+//		newOrder = orderService.saveOrder(newOrder);
+//		
+//		for(Cart y:listCart) {
+//			if(y.getCount()>y.getProduct().getQuantity()) {
+//				orderService.deleteById(newOrder.getId());
+//				return new ResponseEntity<>(null, HttpStatus.OK);
+//			}
+//			y.getProduct().setQuantity(y.getProduct().getQuantity()-y.getCount());
+//			y.getProduct().setSold(y.getProduct().getSold()+y.getCount());
+//			productService.saveProduct(y.getProduct());
+//			Order_Item newOrder_Item = new Order_Item();
+//			newOrder_Item.setCount(y.getCount());
+//			newOrder_Item.setOrder(newOrder);
+//			newOrder_Item.setProduct(y.getProduct());
+//			newOrder_Item = order_ItemService.saveOrder_Item(newOrder_Item);
+//			cartService.deleteById(y.getId());
+//		}
+//		newOrder = orderService.findById(newOrder.getId());
+//		return new ResponseEntity<>(newOrder, HttpStatus.OK);
+//	}
+	
+	@GetMapping(path = "/order")
+	public ResponseEntity<List<OrderDto>> getOrder(String user_id) {
+	    System.out.println(user_id);
+	    List<Order> listOrder = orderService.getAllOrderByUser_Id(user_id);
+	    List<OrderDto> listOrderDto = new ArrayList<>();
+	    for (Order o : listOrder) {
+	        OrderDto orderDto = modelMapper.map(o, OrderDto.class);
+	        for (Order_Item orderItem : o.getOrder_Item()) {
+	            // Lấy thông tin sản phẩm từ productServiceClient bằng product_id
+	            ProductDto productDto = productServiceClient.getProductById(orderItem.getProduct_id());
+	            if (productDto != null) {
+	                // Tìm Order_ItemDto tương ứng trong danh sách Order_ItemDto của OrderDto
+	                Order_ItemDto orderItemDto = orderDto.getOrder_Item().stream()
+	                                            .filter(dto -> dto.getId() == orderItem.getId())
+	                                            .findFirst()
+	                                            .orElse(null);
+	                if (orderItemDto != null) {
+	                    // Gán thông tin sản phẩm vào Order_ItemDto
+	                    orderItemDto.setProduct(productDto);
+	                } else {
+	                    // Xử lý khi không tìm thấy Order_ItemDto
+	                    // Ví dụ: có thể đưa ra thông báo hoặc thực hiện xử lý phù hợp
+	                    System.out.println("Không tìm thấy Order_ItemDto với id: " + orderItem.getId());
+	                }
+	            } else {
+	                // Xử lý khi không tìm thấy sản phẩm
+	                // Ví dụ: có thể đưa ra thông báo hoặc thực hiện xử lý phù hợp
+	                System.out.println("Không tìm thấy sản phẩm với id: " + orderItem.getProduct_id());
+	            }
+	        }
+	        System.out.println(orderDto.getId());
+	        listOrderDto.add(orderDto);
+	    }
+	    return new ResponseEntity<>(listOrderDto, HttpStatus.OK);
+	}
+
+	
+	@GetMapping(path = "/ordermethod")
+	public ResponseEntity<List<OrderDto>> getOrderByPaymentMethod(String user_id, String method){
+		System.out.println(user_id);
+		List<Order> listOrder = orderService.findAllByPayment_Method(method, user_id);
+		List<OrderDto> listOrderDto = new ArrayList<>();
+		for(Order o: listOrder) {
+	        OrderDto orderDto = modelMapper.map(o, OrderDto.class);
+	        for (Order_Item orderItem : o.getOrder_Item()) {
+	            // Lấy thông tin sản phẩm từ productServiceClient bằng product_id
+	            ProductDto productDto = productServiceClient.getProductById(orderItem.getProduct_id());
+	            if (productDto != null) {
+	                // Tìm Order_ItemDto tương ứng trong danh sách Order_ItemDto của OrderDto
+	                Order_ItemDto orderItemDto = orderDto.getOrder_Item().stream()
+	                                            .filter(dto -> dto.getId() == orderItem.getId())
+	                                            .findFirst()
+	                                            .orElse(null);
+	                if (orderItemDto != null) {
+	                    // Gán thông tin sản phẩm vào Order_ItemDto
+	                    orderItemDto.setProduct(productDto);
+	                } else {
+	                    // Xử lý khi không tìm thấy Order_ItemDto
+	                    // Ví dụ: có thể đưa ra thông báo hoặc thực hiện xử lý phù hợp
+	                    System.out.println("Không tìm thấy Order_ItemDto với id: " + orderItem.getId());
+	                }
+	            } else {
+	                // Xử lý khi không tìm thấy sản phẩm
+	                // Ví dụ: có thể đưa ra thông báo hoặc thực hiện xử lý phù hợp
+	                System.out.println("Không tìm thấy sản phẩm với id: " + orderItem.getProduct_id());
+	            }
+	        }
+	        System.out.println(orderDto.getId());
+	        listOrderDto.add(orderDto);
+		}
+		for(Order o: listOrder) {
+		System.out.println(o.getId());
+		}
+		return new ResponseEntity<>(listOrderDto, HttpStatus.OK);
+	}
+	   @GetMapping(path = "/allOrder")
+		public ResponseEntity<List<OrderDto>> getAllOrder(){
+			List<Order> listOrder = orderService.findAll();
+			List<OrderDto> listOrderDto = new ArrayList<>();
+			for(Order o: listOrder) {
+				OrderDto orderDto = modelMapper.map(o, OrderDto.class);
+				
+				listOrderDto.add(orderDto);
+			}
+			return new ResponseEntity<>(listOrderDto, HttpStatus.OK);}
+	   
+	   
+	   @PatchMapping(path = "/order/updateStatus/{orderId}")
+		public ResponseEntity<OrderDto> updateOrderStatus(@PathVariable("orderId") int orderId, String newStatus) {
+		    Order orderToUpdate = orderService.findById(orderId);
+		    if (orderToUpdate == null) {
+		        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		    }
+		    
+		    // Cập nhật trạng thái đơn hàng
+		    orderToUpdate.setStatus(newStatus);
+		    Order updatedOrder = orderService.saveOrder(orderToUpdate);
+		    
+		    // Chuyển đổi đơn hàng đã cập nhật thành DTO để trả về cho client
+		    OrderDto updatedOrderDto = modelMapper.map(updatedOrder, OrderDto.class);
+		    
+		    return new ResponseEntity<>(updatedOrderDto, HttpStatus.OK);
+		}
+	   @GetMapping(path = "/orderStatus")
+		public ResponseEntity<List<OrderDto>> getOrderByStatus(String status){
+			List<Order> listOrderByStatus = orderService.filterByStatus(status);
+			List<OrderDto> listOrderDto = new ArrayList<>();
+			for(Order o: listOrderByStatus) {
+				OrderDto orderDto = modelMapper.map(o, OrderDto.class);
+				listOrderDto.add(orderDto);
+			}
+			return new ResponseEntity<>(listOrderDto, HttpStatus.OK);
+		}
 }

@@ -45,4 +45,7 @@ public class Order_Item {
 	@JsonIgnore
 	private Order order;
 	
+	@Column(name = "product_id")
+	private int product_id;
+	
 }
