@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#FAFAFA"
+    android:backgroundTint="#f1f1f1"
+    tools:context=".Activity.ShowPromotionDetailActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp">
+
+        <ImageView
+            android:id="@+id/ivBack"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginEnd="4dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/back" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Chi Tiết Khuyến Mãi"
+            android:textSize="30sp"
+            android:textStyle="bold"
+            android:textColor="#FF5722"
+            android:gravity="center"
+            android:layout_gravity="center"/>
+    </androidx.appcompat.widget.Toolbar>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clDetail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:background="@drawable/add_address_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TextView
+            android:id="@+id/tvName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Name: "
+            android:textColor="#9B9B9B"
+            android:textSize="17sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvPromoName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textColor="#9B9B9B"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:text="Summer Sale"
+            app:layout_constraintStart_toEndOf="@id/tvName"
+            app:layout_constraintTop_toTopOf="@id/tvName"
+            app:layout_constraintBottom_toBottomOf="@id/tvName"/>
+
+        <TextView
+            android:id="@+id/tvDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Description: "
+            android:textColor="#9B9B9B"
+            android:textSize="17sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvName" />
+
+        <TextView
+            android:id="@+id/tvPromoDescription"
+            android:layout_width="235dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textColor="#9B9B9B"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:text="Title"
+            app:layout_constraintStart_toEndOf="@id/tvDescription"
+            app:layout_constraintTop_toTopOf="@id/tvDescription"
+            app:layout_constraintBottom_toBottomOf="@id/tvDescription"/>
+
+        <TextView
+            android:id="@+id/tvFrom"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="From: "
+            android:textColor="#9B9B9B"
+            android:textSize="17sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvDescription" />
+
+        <TextView
+            android:id="@+id/tvStartDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textColor="#9B9B9B"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:text="01/05/2024"
+            app:layout_constraintStart_toEndOf="@id/tvFrom"
+            app:layout_constraintTop_toTopOf="@id/tvFrom"
+            app:layout_constraintBottom_toBottomOf="@id/tvFrom"/>
+
+        <TextView
+            android:id="@+id/tvTo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:text="To: "
+            android:textColor="#9B9B9B"
+            android:textSize="17sp"
+            app:layout_constraintStart_toEndOf="@id/tvStartDate"
+            app:layout_constraintTop_toTopOf="@id/tvStartDate"
+            app:layout_constraintBottom_toBottomOf="@id/tvStartDate"/>
+
+        <TextView
+            android:id="@+id/tvEndDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textColor="#9B9B9B"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:text="05/05/2024"
+            app:layout_constraintStart_toEndOf="@id/tvTo"
+            app:layout_constraintTop_toTopOf="@id/tvTo"
+            app:layout_constraintBottom_toBottomOf="@id/tvTo"/>
+
+        <TextView
+            android:id="@+id/tvDiscount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="Discount: "
+            android:textColor="#9B9B9B"
+            android:textSize="17sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvFrom"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <TextView
+            android:id="@+id/tvPromoDiscount"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textColor="#9B9B9B"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:text="25%"
+            app:layout_constraintStart_toEndOf="@id/tvDiscount"
+            app:layout_constraintTop_toTopOf="@id/tvDiscount"
+            app:layout_constraintBottom_toBottomOf="@id/tvDiscount"/>
+
+        <TextView
+            android:id="@+id/tvStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:text="Status: "
+            android:textColor="#9B9B9B"
+            android:textSize="17sp"
+            app:layout_constraintStart_toStartOf="@id/tvTo"
+            app:layout_constraintTop_toBottomOf="@id/tvTo" />
+
+        <TextView
+            android:id="@+id/tvPromoStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:textColor="#9B9B9B"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            android:text="Active"
+            app:layout_constraintStart_toEndOf="@id/tvStatus"
+            app:layout_constraintTop_toTopOf="@id/tvStatus"
+            app:layout_constraintBottom_toBottomOf="@id/tvStatus"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/clProduct"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/add_address_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/btnThemSanPham"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_promotion_background"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:paddingStart="10dp"
+            android:paddingEnd="10dp"
+            android:text="Thêm Sản Phẩm"
+            android:textStyle="bold"
+            android:textColor="#ffffff"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rcvProductPromo"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintStart_toStartOf="@id/btnThemSanPham"
+            app:layout_constraintTop_toBottomOf="@id/btnThemSanPham"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</LinearLayout>

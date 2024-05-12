@@ -21,6 +21,10 @@ public class ProductImageServiceImpl implements ProductImageService{
 	public void deleteById(int id) {
 		productImageRepository.deleteById(id);
 	}
+	@Override
+	public void deleteProductImagesByProductId(int id) {
+		productImageRepository.deleteProductImagesByProductId(id);
+	}
 	
 	
 }

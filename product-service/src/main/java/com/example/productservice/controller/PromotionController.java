@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,6 +32,7 @@ import com.example.productservice.service.Promotion_ItemService;
 import lombok.Delegate;
 
 @RestController
+@RequestMapping("api/product")
 public class PromotionController {
 	@Autowired
 	PromotionService promotionService;
@@ -135,6 +137,7 @@ public class PromotionController {
 		}
 	}
 	
+	
 	@DeleteMapping(path = "/promotion/deleteProduct/{id}")
 	public ResponseEntity<Object> deleteProductInPromotion(@PathVariable Integer id){
 		Promotion_Item item = promotion_ItemService.getPromotionItemById(id);
@@ -152,6 +155,7 @@ public class PromotionController {
 	
 	@PutMapping(path = "/promotion/addProduct")
 	public ResponseEntity<PromotionDto> addProductToPromotion(@RequestParam int promotionId, @RequestBody List<Product> products){
+		System.out.println(1234);
 		Promotion promotion = promotionService.getPromotionById(promotionId);
 		for(Product product: products) {
 			Promotion_Item newItem = new Promotion_Item();
@@ -168,6 +172,5 @@ public class PromotionController {
 		else {
 			return new ResponseEntity<>(dto, HttpStatus.NOT_FOUND);
 		}
-			
 	}
 }

@@ -92,10 +92,33 @@ public class CartController {
         return new ResponseEntity<>(lisCartDto, HttpStatus.OK);
     }
 	
-	@PostMapping(path = "/deletecart", consumes = "application/x-www-form-urlencoded")
+	@GetMapping(path = "/getallcartbyuserid")
+    public ResponseEntity<List<CartDto>> GetAllCartByUser_id(String user_id){
+        List<Cart> listCart = cartService.GetAllCartByUser_id(user_id);
+        List<CartDto> lisCartDto = new ArrayList<>();
+        for(Cart cart : listCart) {
+            CartDto cartDto = new CartDto();
+            cartDto.setId(cart.getId());
+            cartDto.setCount(cart.getCount());
+            
+            // Lấy thông tin ProductDto từ ProductServiceClient
+            ProductDto productDto = productServiceClient.getProductById(cart.getProduct_id());
+            if(productDto != null) {
+                cartDto.setProduct(productDto);
+            } else {
+               
+            }
+
+            lisCartDto.add(cartDto);
+        }
+        return new ResponseEntity<>(lisCartDto, HttpStatus.OK);
+    }
+	
+//	@PostMapping(path = "/deletecart", consumes = "application/x-www-form-urlencoded")
+	@PostMapping(path = "/deletecart")
 	public ResponseEntity<String> DeleteCart(int cart_id, String user_id) {
 		List<Cart> carts = cartService.GetAllCartByUser_id(user_id);
-		System.out.println(cart_id + user_id);
+		System.out.println(cart_id + user_id +"abc");
 		for(Cart y:carts) {
 			if(cart_id == y.getId())
 				cartService.deleteById(cart_id);

@@ -139,24 +139,12 @@ public class ProductServiceImpl implements ProductService {
 		return productRepository.findTop4ProductByCategory_id(id);
 	}
 	@Override
-	public 	List<Object[]> findRevenueStatisticByDate(Date datefrom,Date dateto){
-		return productRepository.findRevenueStatisticByDate(datefrom, dateto);
-	}
-	@Override
-	public 	List<Object[]> findQuantityStatisticByDate(Date datefrom,Date dateto){
-		return productRepository.findQuantityStatisticByDate(datefrom, dateto);
-	}
-	@Override
 	public 	List<Object[]> findProductStatistic(){
 		return productRepository.findProductStatistic();
 	}
 	@Override
 	public 	List<Object[]> findUnitOfProductStatistic(){
 		return productRepository.findUnitOfProductStatistic();
-	}
-	@Override
-	public 	List<Object[]> findStatisticByMonth(int year){
-		return productRepository.findStatisticByMonth(year);
 	}
 
 	@Override

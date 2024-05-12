@@ -1,8 +1,5 @@
 package com.example.productservice.entity;
 
-import java.sql.Date;
-
-
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

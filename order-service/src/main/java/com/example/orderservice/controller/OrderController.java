@@ -22,16 +22,20 @@ import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.timelimiter.annotation.TimeLimiter;
 import lombok.RequiredArgsConstructor;
 
+import com.example.orderservice.dto.CartDto;
 import com.example.orderservice.dto.OrderDto;
 import com.example.orderservice.dto.OrderRequest;
 import com.example.orderservice.dto.OrderResponse;
 import com.example.orderservice.dto.Order_ItemDto;
 import com.example.orderservice.dto.ProductDto;
+import com.example.orderservice.dto.PromotionDto;
+import com.example.orderservice.dto.UserDto;
 import com.example.orderservice.entity.Order;
 import com.example.orderservice.entity.Order_Item;
 import com.example.orderservice.service.OrderService;
 import com.example.orderservice.service.Order_ItemService;
 import com.example.orderservice.service.ProductServiceClient;
+import com.example.orderservice.service.UserServiceClient;
 
 @RestController
 @RequestMapping("api/order")
@@ -42,6 +46,9 @@ public class OrderController {
 	
 	@Autowired
 	Order_ItemService order_ItemService;
+	@Autowired
+	UserServiceClient userServiceClient;
+	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	@CircuitBreaker(name="user",fallbackMethod = "fallbackMethod")
@@ -67,56 +74,62 @@ public class OrderController {
 	@Autowired
 	ProductServiceClient productServiceClient;
 	
-//	@PostMapping(path = "/placeorder", consumes = "application/x-www-form-urlencoded")
-//	public ResponseEntity<Order> placeOrder(String user_id, String fullname, String phoneNumber, String address, String paymentMethod){
-//		List<Cart> listCart = cartService.GetAllCartByUser_id(user_id);
-//		Order newOrder = new Order();
-//		User user = userService.findByIdAndRole(user_id, "user");
-//		long millis = System.currentTimeMillis();
-//		Date booking_date = new java.sql.Date(millis);
-//		int total=0;
-//		for(Cart y: listCart) {
-//			Promotion promotion = promotionService.getPromotionByProductId(y.getProduct().getId());
-//			if (promotion != null) {
-//				int PriceDiscount = y.getProduct().getPrice() - (int)(y.getProduct().getPrice() * promotion.getDiscountPercent());
-//				total += y.getCount() * PriceDiscount;
-//			}
-//			else {
-//				total += y.getProduct().getPrice() * y.getCount();
-//			}
-//		}
-//		newOrder.setUser(user);
-//		newOrder.setFullname(fullname);
-//		newOrder.setBooking_Date(booking_date);
-//		newOrder.setCountry("Việt Nam");
-//		newOrder.setEmail(user.getEmail());
-//		newOrder.setPayment_Method(paymentMethod);
-//		newOrder.setAddress(address);
-//		newOrder.setNote(null);
-//		newOrder.setPhone(phoneNumber);
-//		newOrder.setStatus("Pending");
-//		newOrder.setTotal(total);
-//		
-//		newOrder = orderService.saveOrder(newOrder);
-//		
-//		for(Cart y:listCart) {
-//			if(y.getCount()>y.getProduct().getQuantity()) {
-//				orderService.deleteById(newOrder.getId());
-//				return new ResponseEntity<>(null, HttpStatus.OK);
-//			}
-//			y.getProduct().setQuantity(y.getProduct().getQuantity()-y.getCount());
-//			y.getProduct().setSold(y.getProduct().getSold()+y.getCount());
-//			productService.saveProduct(y.getProduct());
-//			Order_Item newOrder_Item = new Order_Item();
-//			newOrder_Item.setCount(y.getCount());
-//			newOrder_Item.setOrder(newOrder);
-//			newOrder_Item.setProduct(y.getProduct());
-//			newOrder_Item = order_ItemService.saveOrder_Item(newOrder_Item);
-//			cartService.deleteById(y.getId());
-//		}
-//		newOrder = orderService.findById(newOrder.getId());
-//		return new ResponseEntity<>(newOrder, HttpStatus.OK);
-//	}
+	@GetMapping(path = "/checkconnect")
+	public ResponseEntity<Boolean> checkConnect() {
+		return new ResponseEntity<>(true, HttpStatus.OK);
+	}
+	
+	
+	@PostMapping(path = "/placeorder", consumes = "application/x-www-form-urlencoded")
+	public ResponseEntity<Order> placeOrder(String user_id, String fullname, String phoneNumber, String address, String paymentMethod){
+		List<CartDto> listCart = userServiceClient.GetAllCartByUser_id(user_id);
+		Order newOrder = new Order();
+		UserDto user = userServiceClient.findByIdAndRole(user_id, "user");
+		long millis = System.currentTimeMillis();
+		Date booking_date = new java.sql.Date(millis);
+		int total=0;
+		for(CartDto y: listCart) {
+			PromotionDto promotion = productServiceClient.getPromotionByProductID(y.getProduct().getId());
+			if (promotion != null) {
+				int PriceDiscount = y.getProduct().getPrice() - (int)(y.getProduct().getPrice() * promotion.getDiscountPercent());
+				total += y.getCount() * PriceDiscount;
+			}
+			else {
+				total += y.getProduct().getPrice() * y.getCount();
+			}
+		}
+		newOrder.setUser_id(user.getId());
+		newOrder.setFullname(fullname);
+		newOrder.setBooking_Date(booking_date);
+		newOrder.setCountry("Việt Nam");
+		newOrder.setEmail(user.getEmail());
+		newOrder.setPayment_Method(paymentMethod);
+		newOrder.setAddress(address);
+		newOrder.setNote(null);
+		newOrder.setPhone(phoneNumber);
+		newOrder.setStatus("Pending");
+		newOrder.setTotal(total);
+		
+		newOrder = orderService.saveOrder(newOrder);
+		
+		for(CartDto y:listCart) {
+			if(y.getCount()>y.getProduct().getQuantity()) {
+				orderService.deleteById(newOrder.getId());
+				return new ResponseEntity<>(null, HttpStatus.OK);
+			}
+			y.getProduct().setQuantity(y.getProduct().getQuantity()-y.getCount());
+			y.getProduct().setSold(y.getProduct().getSold()+y.getCount());
+			productServiceClient.saveProduct(y.getProduct());
+			Order_Item newOrder_Item = new Order_Item();
+			newOrder_Item.setCount(y.getCount());
+			newOrder_Item.setOrder(newOrder);
+			newOrder_Item.setProduct_id(y.getProduct().getId());
+			newOrder_Item = order_ItemService.saveOrder_Item(newOrder_Item);
+			userServiceClient.DeleteCart(y.getId(),user_id);
+		}
+		newOrder = orderService.findById(newOrder.getId());
+		return new ResponseEntity<>(newOrder, HttpStatus.OK);
+	}
 	
 	@GetMapping(path = "/order")
 	public ResponseEntity<List<OrderDto>> getOrder(String user_id) {
@@ -126,25 +139,18 @@ public class OrderController {
 	    for (Order o : listOrder) {
 	        OrderDto orderDto = modelMapper.map(o, OrderDto.class);
 	        for (Order_Item orderItem : o.getOrder_Item()) {
-	            // Lấy thông tin sản phẩm từ productServiceClient bằng product_id
 	            ProductDto productDto = productServiceClient.getProductById(orderItem.getProduct_id());
 	            if (productDto != null) {
-	                // Tìm Order_ItemDto tương ứng trong danh sách Order_ItemDto của OrderDto
 	                Order_ItemDto orderItemDto = orderDto.getOrder_Item().stream()
 	                                            .filter(dto -> dto.getId() == orderItem.getId())
 	                                            .findFirst()
 	                                            .orElse(null);
 	                if (orderItemDto != null) {
-	                    // Gán thông tin sản phẩm vào Order_ItemDto
 	                    orderItemDto.setProduct(productDto);
 	                } else {
-	                    // Xử lý khi không tìm thấy Order_ItemDto
-	                    // Ví dụ: có thể đưa ra thông báo hoặc thực hiện xử lý phù hợp
 	                    System.out.println("Không tìm thấy Order_ItemDto với id: " + orderItem.getId());
 	                }
 	            } else {
-	                // Xử lý khi không tìm thấy sản phẩm
-	                // Ví dụ: có thể đưa ra thông báo hoặc thực hiện xử lý phù hợp
 	                System.out.println("Không tìm thấy sản phẩm với id: " + orderItem.getProduct_id());
 	            }
 	        }
@@ -163,25 +169,18 @@ public class OrderController {
 		for(Order o: listOrder) {
 	        OrderDto orderDto = modelMapper.map(o, OrderDto.class);
 	        for (Order_Item orderItem : o.getOrder_Item()) {
-	            // Lấy thông tin sản phẩm từ productServiceClient bằng product_id
 	            ProductDto productDto = productServiceClient.getProductById(orderItem.getProduct_id());
 	            if (productDto != null) {
-	                // Tìm Order_ItemDto tương ứng trong danh sách Order_ItemDto của OrderDto
 	                Order_ItemDto orderItemDto = orderDto.getOrder_Item().stream()
 	                                            .filter(dto -> dto.getId() == orderItem.getId())
 	                                            .findFirst()
 	                                            .orElse(null);
 	                if (orderItemDto != null) {
-	                    // Gán thông tin sản phẩm vào Order_ItemDto
 	                    orderItemDto.setProduct(productDto);
 	                } else {
-	                    // Xử lý khi không tìm thấy Order_ItemDto
-	                    // Ví dụ: có thể đưa ra thông báo hoặc thực hiện xử lý phù hợp
 	                    System.out.println("Không tìm thấy Order_ItemDto với id: " + orderItem.getId());
 	                }
 	            } else {
-	                // Xử lý khi không tìm thấy sản phẩm
-	                // Ví dụ: có thể đưa ra thông báo hoặc thực hiện xử lý phù hợp
 	                System.out.println("Không tìm thấy sản phẩm với id: " + orderItem.getProduct_id());
 	            }
 	        }
@@ -227,6 +226,22 @@ public class OrderController {
 			List<OrderDto> listOrderDto = new ArrayList<>();
 			for(Order o: listOrderByStatus) {
 				OrderDto orderDto = modelMapper.map(o, OrderDto.class);
+				for (Order_Item orderItem : o.getOrder_Item()) {
+		            ProductDto productDto = productServiceClient.getProductById(orderItem.getProduct_id());
+		            if (productDto != null) {
+		                Order_ItemDto orderItemDto = orderDto.getOrder_Item().stream()
+		                                            .filter(dto -> dto.getId() == orderItem.getId())
+		                                            .findFirst()
+		                                            .orElse(null);
+		                if (orderItemDto != null) {
+		                    orderItemDto.setProduct(productDto);
+		                } else {
+		                    System.out.println("Không tìm thấy Order_ItemDto với id: " + orderItem.getId());
+		                }
+		            } else {
+		                System.out.println("Không tìm thấy sản phẩm với id: " + orderItem.getProduct_id());
+		            }
+		        }
 				listOrderDto.add(orderDto);
 			}
 			return new ResponseEntity<>(listOrderDto, HttpStatus.OK);

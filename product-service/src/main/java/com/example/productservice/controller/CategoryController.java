@@ -29,17 +29,19 @@ public class CategoryController {
 	CategoryService categoryService;
 	@Autowired
 	CloudinaryService cloudinaryService;
+	
+	@Autowired
+    private ModelMapper modelMapper;
 
 	@GetMapping(path = "/category")
 	public ResponseEntity<List<Category>> GetCategory(){
 		List<Category> listcaCategories = categoryService.findAll();
 		return new ResponseEntity<>(listcaCategories, HttpStatus.OK);
 	}
-	@Autowired
-    private ModelMapper modelMapper;
 	
     @PostMapping(path = "/newcategory")
     public ResponseEntity<Category> newCategory(String category_name, MultipartFile category_image) {
+    	System.out.println(category_name + category_image );
         try {
             Category newCategory = new Category();
             newCategory.setCategory_Name(category_name);

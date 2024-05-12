@@ -1,6 +1,8 @@
 package com.example.productservice.controller;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -27,6 +29,7 @@ import com.example.productservice.dto.ProductRequest;
 import com.example.productservice.dto.ProductResponse;
 import com.example.productservice.entity.Product;
 import com.example.productservice.entity.ProductImage;
+import com.example.productservice.entity.ReportTotal;
 import com.example.productservice.service.CategoryService;
 import com.example.productservice.service.CloudinaryService;
 import com.example.productservice.service.ProductImageService;
@@ -55,6 +58,9 @@ public class ProductController {
 	
 	@Autowired
 	ProductImageService productImageService;
+	
+	@Autowired
+	CategoryService categoryService;
 	
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
@@ -111,142 +117,151 @@ public class ProductController {
 	public ResponseEntity<List<Product>> GetProduct(){
 		List<Product> listProduct = productService.getAllProduct();
 		return new ResponseEntity<>(listProduct, HttpStatus.OK);
+		}
+		
+	@PostMapping(path = "/saveproduct")
+		public ResponseEntity<ProductDto> saveProduct(ProductDto productDto){
+		Product product = productService.getProductById(productDto.getId());
+		product.setQuantity(productDto.getQuantity());
+		product.setSold(productDto.getSold());
+		Product productSaved = productService.saveProduct(product);
+			return new ResponseEntity<>(productDto, HttpStatus.OK);
 	}
-//    @PostMapping(path = "/addproduct",consumes = "multipart/form-data")
-//    public ResponseEntity<Product> newProduct(String product_name,
-//    		String product_price,
-//    		String product_quantity,
-//    		String product_decription,
-//    		String  product_category,
-//    		@RequestParam("product_images") List<MultipartFile> product_images,
-//    		String product_sold,
-//    		String product_is_selling,
-//    		String  product_is_active) {
-//    	System.out.println(product_images);
-//        try {
-//            Product newProduct = new Product();
-//            List<ProductImage> productImages = new ArrayList<ProductImage>();
-////            List<String> imageUrls = new ArrayList<>();
-//            if (!product_images.isEmpty()) {
-//            	for(MultipartFile image :product_images) {
-//            	ProductImage productImage = new ProductImage();
-//                String url = cloudinaryService.uploadFile(image);
-//                productImage.setUrl_Image(url);
-//                productImages.add(productImage);
-//                }
-//            } else {
-//                return ResponseEntity.badRequest().build();
-//            }
-//        	java.sql.Date createdAt = new java.sql.Date(System.currentTimeMillis());
-//            newProduct.setProduct_Name(product_name);
-//            newProduct.setPrice(Integer.parseInt(product_price));
-//            newProduct.setQuantity(Integer.parseInt(product_quantity));
-//            newProduct.setDescription(product_decription);
-//            newProduct.setIs_Active(Integer.parseInt(product_is_active));
-//            newProduct.setIs_Selling(Integer.parseInt(product_is_selling));
-//            newProduct.setSold(Integer.parseInt(product_sold));
-//            newProduct.setCreated_At(createdAt);
-//            newProduct.setCategory(categoryService.getCategoryById(Integer.parseInt(product_category)));
-//            System.out.println(newProduct);
-//            Product savedProduct = productService.saveProduct(newProduct);
-//            for (ProductImage productImage : productImages) {
-//            	ProductImage productImage1=new ProductImage();
-//            	productImage1 =productImage;
-//            	productImage1.setProduct(savedProduct);
-//                productImageService.save(productImage1);
-//            }
-//            return new ResponseEntity<Product>(savedProduct, HttpStatus.OK);
-//        } catch (Exception e) {
-//           	System.out.println(4);
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-//        }
-//    }
+    @PostMapping(path = "/addproduct",consumes = "multipart/form-data")
+    public ResponseEntity<Product> newProduct(String product_name,
+    		String product_price,
+    		String product_quantity,
+    		String product_decription,
+    		String  product_category,
+    		@RequestParam("product_images") List<MultipartFile> product_images,
+    		String product_sold,
+    		String product_is_selling,
+    		String  product_is_active) {
+    	System.out.println(product_images);
+        try {
+            Product newProduct = new Product();
+            List<ProductImage> productImages = new ArrayList<ProductImage>();
+//            List<String> imageUrls = new ArrayList<>();
+            if (!product_images.isEmpty()) {
+            	for(MultipartFile image :product_images) {
+            	ProductImage productImage = new ProductImage();
+                String url = cloudinaryService.uploadFile(image);
+                productImage.setUrl_Image(url);
+                productImages.add(productImage);
+                }
+            } else {
+                return ResponseEntity.badRequest().build();
+            }
+        	java.sql.Date createdAt = new java.sql.Date(System.currentTimeMillis());
+            newProduct.setProduct_Name(product_name);
+            newProduct.setPrice(Integer.parseInt(product_price));
+            newProduct.setQuantity(Integer.parseInt(product_quantity));
+            newProduct.setDescription(product_decription);
+            newProduct.setIs_Active(Integer.parseInt(product_is_active));
+            newProduct.setIs_Selling(Integer.parseInt(product_is_selling));
+            newProduct.setSold(Integer.parseInt(product_sold));
+            newProduct.setCreated_At(createdAt);
+            newProduct.setCategory(categoryService.getCategoryById(Integer.parseInt(product_category)));
+            System.out.println(newProduct);
+            Product savedProduct = productService.saveProduct(newProduct);
+            for (ProductImage productImage : productImages) {
+            	ProductImage productImage1=new ProductImage();
+            	productImage1 =productImage;
+            	productImage1.setProduct(savedProduct);
+                productImageService.save(productImage1);
+            }
+            return new ResponseEntity<Product>(savedProduct, HttpStatus.OK);
+        } catch (Exception e) {
+           	System.out.println(4);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 	
-//    @PutMapping(path = "/updateproduct", consumes = "multipart/form-data")
-//    public ResponseEntity<Product> updateProduct(String id,
-//                                                String product_name,
-//                                         		String product_price,
-//                                         		String product_quantity,
-//                                         		String product_decription,
-//                                         		String  product_category,
-//                                         		@RequestParam("product_images") List<MultipartFile> product_images,
-//                                         		String product_sold,
-//                                         		String product_is_selling,
-//                                         		String  product_is_active) {
-//    	System.out.println(id);
-//    	System.out.println(product_name);
-//    	System.out.println(product_price);
-//    	System.out.println(product_quantity);
-//    	System.out.println(product_decription);
-//    	System.out.println(product_category);
-//    	System.out.println(product_images);
-//    	System.out.println(product_sold);
-//    	System.out.println(product_is_selling);
-//    	System.out.println(product_is_active);
-//        try {
-//            Product product = productService.getProductById(Integer.parseInt(id));
-//            List<ProductImage> productImages = new ArrayList<ProductImage>();
-//            if (product != null) {
-//            	 productImageService.deleteProductImagesByProductId(Integer.parseInt(id)); 
-//            	 if (!product_images.isEmpty()) {
-//                 	for(MultipartFile image :product_images) {
-//                 	ProductImage productImage = new ProductImage();
-//                     String url = cloudinaryService.uploadFile(image);
-//                     productImage.setUrl_Image(url);
-//                     productImages.add(productImage);
-//                     }
-//                 } else {
-//                     return ResponseEntity.badRequest().build();
-//                 }
-//                // Cập nhật thông tin sản phẩm
-//                product.setProduct_Name(product_name);
-//                product.setPrice(Integer.parseInt(product_price));
-//                product.setQuantity(Integer.parseInt(product_quantity));
-//                product.setDescription(product_decription);
-//                product.setIs_Active(Integer.parseInt(product_is_active));
-//                product.setIs_Selling(Integer.parseInt(product_is_selling));
-//                product.setSold(Integer.parseInt(product_sold));
-//                product.setCategory(categoryService.getCategoryById(Integer.parseInt(product_category)));
-//           
-//                for (ProductImage productImage : productImages) {
-//                	ProductImage productImage1=new ProductImage();
-//                	productImage1 =productImage;
-//                	productImage1.setProduct(product);
-//                    productImageService.save(productImage1);
-//                }
-//
-//                // Lưu sản phẩm và hình ảnh sản phẩm
-//               
-//                for (ProductImage productImage : productImages) {
-//                    productImageService.save(productImage);
-//                }
-//                Product savedProduct = productService.saveProduct(product);
-//
-//                return new ResponseEntity<Product>(savedProduct, HttpStatus.OK);
-//            } else {
-//            	return new ResponseEntity<Product>(HttpStatus.NOT_ACCEPTABLE);
-//            }
-//        } catch (Exception e) {
-//        	return new ResponseEntity<Product>(HttpStatus.NOT_ACCEPTABLE);
-//        }
-//    }
+    @PutMapping(path = "/updateproduct", consumes = "multipart/form-data")
+    public ResponseEntity<Product> updateProduct(String id,
+                                                String product_name,
+                                         		String product_price,
+                                         		String product_quantity,
+                                         		String product_decription,
+                                         		String  product_category,
+                                         		@RequestParam("product_images") List<MultipartFile> product_images,
+                                         		String product_sold,
+                                         		String product_is_selling,
+                                         		String  product_is_active) {
+    	System.out.println(id);
+    	System.out.println(product_name);
+    	System.out.println(product_price);
+    	System.out.println(product_quantity);
+    	System.out.println(product_decription);
+    	System.out.println(product_category);
+    	System.out.println(product_images);
+    	System.out.println(product_sold);
+    	System.out.println(product_is_selling);
+    	System.out.println(product_is_active);
+        try {
+            Product product = productService.getProductById(Integer.parseInt(id));
+            List<ProductImage> productImages = new ArrayList<ProductImage>();
+            if (product != null) {
+            	 productImageService.deleteProductImagesByProductId(Integer.parseInt(id)); 
+            	 if (!product_images.isEmpty()) {
+                 	for(MultipartFile image :product_images) {
+                 	ProductImage productImage = new ProductImage();
+                     String url = cloudinaryService.uploadFile(image);
+                     productImage.setUrl_Image(url);
+                     productImages.add(productImage);
+                     }
+                 } else {
+                     return ResponseEntity.badRequest().build();
+                 }
+                // Cập nhật thông tin sản phẩm
+                product.setProduct_Name(product_name);
+                product.setPrice(Integer.parseInt(product_price));
+                product.setQuantity(Integer.parseInt(product_quantity));
+                product.setDescription(product_decription);
+                product.setIs_Active(Integer.parseInt(product_is_active));
+                product.setIs_Selling(Integer.parseInt(product_is_selling));
+                product.setSold(Integer.parseInt(product_sold));
+                product.setCategory(categoryService.getCategoryById(Integer.parseInt(product_category)));
+           
+                for (ProductImage productImage : productImages) {
+                	ProductImage productImage1=new ProductImage();
+                	productImage1 =productImage;
+                	productImage1.setProduct(product);
+                    productImageService.save(productImage1);
+                }
+
+                // Lưu sản phẩm và hình ảnh sản phẩm
+               
+                for (ProductImage productImage : productImages) {
+                    productImageService.save(productImage);
+                }
+                Product savedProduct = productService.saveProduct(product);
+
+                return new ResponseEntity<Product>(savedProduct, HttpStatus.OK);
+            } else {
+            	return new ResponseEntity<Product>(HttpStatus.NOT_ACCEPTABLE);
+            }
+        } catch (Exception e) {
+        	return new ResponseEntity<Product>(HttpStatus.NOT_ACCEPTABLE);
+        }
+    }
 
 	
-//	@DeleteMapping("/deleteproduct/{id}")
-//	public ResponseEntity<Object> deleteProduct(@PathVariable Integer id) {
-//		Product product = productService.getProductById(id);
-//	    if (product != null) {
-//	    	productImageService.deleteProductImagesByProductId(id);
-//	    	productService.deleteProductById(id);
-//	        Map<String, String> response = new HashMap<>();
-//	        response.put("message", "Product with ID " + id + " has been deleted");
-//	        return new ResponseEntity<>(response, HttpStatus.OK);
-//	    } else {
-//	        Map<String, String> response = new HashMap<>();
-//	        response.put("error", "Product with ID " + id + " not found");
-//	        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
-//	    }
-//	}
+	@DeleteMapping("/deleteproduct/{id}")
+	public ResponseEntity<Object> deleteProduct(@PathVariable Integer id) {
+		Product product = productService.getProductById(id);
+	    if (product != null) {
+	    	productImageService.deleteProductImagesByProductId(id);
+	    	productService.deleteProductById(id);
+	        Map<String, String> response = new HashMap<>();
+	        response.put("message", "Product with ID " + id + " has been deleted");
+	        return new ResponseEntity<>(response, HttpStatus.OK);
+	    } else {
+	        Map<String, String> response = new HashMap<>();
+	        response.put("error", "Product with ID " + id + " not found");
+	        return new ResponseEntity<>(response, HttpStatus.NOT_FOUND);
+	    }
+	}
 	
 	@GetMapping(path = "/product/notInPromotion")
 	public ResponseEntity<List<Product>> getProductNotInPromotion(){
@@ -256,6 +271,37 @@ public class ProductController {
 		}
 		return new ResponseEntity<>(list, HttpStatus.OK);
 	}
-	
+	@GetMapping(path = "/product-statistic")
+  public ResponseEntity<List<ReportTotal>> ProductStatistic() {
+          // Gọi phương thức để thực hiện xử lý với các đối tượng Date này
+          List<Object[]> results = productService.findProductStatistic();
+          List<ReportTotal> reportTotals = new ArrayList<>();
+          for (Object[] result : results) {
+              String name = (String) result[0];
+              BigDecimal value = (BigDecimal) result[1];
+              reportTotals.add(new ReportTotal(name, value.doubleValue()));
+          }
+          if (reportTotals.isEmpty()) {
+              return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+          } else {
+              return new ResponseEntity<>(reportTotals, HttpStatus.OK);
+      }
+  }
+	@GetMapping(path = "/unit-of-product-statistic")
+  public ResponseEntity<List<ReportTotal>> UnitOfProductStatistic() {
+          // Gọi phương thức để thực hiện xử lý với các đối tượng Date này
+          List<Object[]> results = productService.findUnitOfProductStatistic();
+          List<ReportTotal> reportTotals = new ArrayList<>();
+          for (Object[] result : results) {
+              String name = (String) result[0];
+              BigDecimal value = (BigDecimal) result[1];
+              reportTotals.add(new ReportTotal(name, value.doubleValue()));
+          }
+          if (reportTotals.isEmpty()) {
+              return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+          } else {
+              return new ResponseEntity<>(reportTotals, HttpStatus.OK);
+      }
+	}
 	
 }

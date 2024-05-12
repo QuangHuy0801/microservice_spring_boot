@@ -5,8 +5,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
-
-
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.CascadeType;
@@ -51,7 +50,8 @@ public class Product {
 
 	@Column(name = "is_Selling")
 	private int is_Selling;
-
+	
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy MM dd HH:mm:ss")
 	@Column(name = "created_at")
 	private Date created_At;
 

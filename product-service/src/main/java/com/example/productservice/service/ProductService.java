@@ -41,11 +41,8 @@ public interface ProductService {
 	Page<Product> findByProduct_NameAndCategory_idContaining(String name, int category_id, Pageable pageable);
 
 	List<Product> findTop4ProductByCategory_id(int name);
-	List<Object[]> findRevenueStatisticByDate(Date datefrom,Date dateto);
-	List<Object[]> findQuantityStatisticByDate(Date datefrom,Date dateto);
 	List<Object[]> findProductStatistic();
 	List<Object[]> findUnitOfProductStatistic();
-	List<Object[]> findStatisticByMonth(int year);
 	
 	List<Product> getProductNotInPromotion();
 

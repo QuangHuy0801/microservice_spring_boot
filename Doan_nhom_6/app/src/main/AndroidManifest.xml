@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
+    <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
+    <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+    <application
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fontFamily="@font/be_vietnam"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@drawable/icon_app"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.Doan_nhom_6"
+        android:usesCleartextTraffic="true"
+        tools:targetApi="31">
+        <activity
+            android:name=".Activity.ShowPromotionDetailActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.AdminPromotionActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.MapsActivity"
+            android:exported="false" />
+        <!--
+             TODO: Before you run your application, you need a Google Maps API key.
+
+             To get one, follow the directions here:
+
+                https://developers.google.com/maps/documentation/android-sdk/get-api-key
+
+             Once you have your API key (it starts with "AIza"), define a new property in your
+             project's local.properties file (e.g. MAPS_API_KEY=Aiza...), and replace the
+             "YOUR_API_KEY" string in this file with "${MAPS_API_KEY}".
+        -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="@string/my_map_api_key" />
+
+        <activity
+            android:name=".Activity.AdminProductsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.GetAllUserActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.ForgotPasswordAdminActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.EditProfileAdminActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.AdminCategoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.UnitOfProductStatisticActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.ProductsSoldActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.MainDashboardActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.ProductStatisticActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.RevenueStatisticActivity"
+            android:exported="true" />
+        <activity
+            android:name=".Activity.LoginDashboardActivity"
+            android:exported="true" />
+        <activity
+            android:name=".Activity.EditProfileActivity"
+            android:exported="true" />
+        <activity
+            android:name=".Activity.AddressActivity"
+            android:exported="true" />
+        <activity
+            android:name=".Activity.CheckOutActivity"
+            android:exported="true"
+            android:launchMode="singleTask">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+
+                <data
+                    android:host="app"
+                    android:scheme="demozpdk" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".Activity.ShowDetailActivity"
+            android:exported="true" />
+        <activity
+            android:name=".Activity.OrderActivity"
+            android:exported="true" />
+        <activity
+            android:name=".Activity.CartActivity"
+            android:exported="true" />
+        <activity
+            android:name=".Activity.UserActivity"
+            android:exported="true" />
+        <activity
+            android:name=".Activity.ProductsActivity"
+            android:exported="true" />
+        <activity
+            android:name=".Activity.SignUpActivity"
+            android:exported="true" />
+        <activity
+            android:name=".Activity.MainActivity"
+            android:exported="true" />
+        <activity
+            android:name=".Activity.LoginActivity"
+            android:exported="true" />
+        <activity
+            android:name=".Activity.ForgotPasswordActivity"
+            android:exported="true" />
+        <activity
+            android:name=".Activity.IntroActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+
+</manifest>

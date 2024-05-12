@@ -17,8 +17,7 @@ public class CategoryServiceImpl implements CategoryService {
 	
 	@Override
 	public Category saveCategory(Category category) {
-		// TODO Auto-generated method stub
-		return null;
+		return categoryRepository.save(category);
 	}
 
 	@Override
@@ -35,7 +34,7 @@ public class CategoryServiceImpl implements CategoryService {
 	
 	@Override
 	public void deleteCategoryId(int id) {
-		// TODO Auto-generated method stub
+		categoryRepository.deleteById(id);
 	}
 
 	@Override
