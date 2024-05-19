@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.example.productservice.dto.ProductDetailResponse;
 import com.example.productservice.dto.ProductDto;
 import com.example.productservice.dto.ProductImageDto;
 import com.example.productservice.dto.ProductRequest;
@@ -40,7 +42,7 @@ import lombok.SneakyThrows;
 
 import org.springframework.web.bind.annotation.RequestParam;
 
-
+@CrossOrigin("*")
 @RestController
 @RequestMapping("api/product")
 @RequiredArgsConstructor
@@ -93,6 +95,25 @@ public class ProductController {
 	    } else {
 	        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	    }
+	}
+	@GetMapping(path = "/product/{id}")
+	public ResponseEntity<Product> getProductById(@PathVariable Integer id){
+		Product product = productService.getProductById(id);
+		if(product != null) {
+			return new ResponseEntity<Product>(product, HttpStatus.OK);
+		}
+		return new ResponseEntity<Product>(product, HttpStatus.NOT_FOUND);	
+	}
+	@GetMapping("/productDetail/{id}")
+    public ResponseEntity<?> getProductDetailById(@PathVariable int id) {
+        Product product = productService.getProductById(id);
+        if (product != null) {
+            List<Product> relatedProducts = productService.findTop4ProductByCategory_id(product.getCategory().getId());
+            ProductDetailResponse response = new ProductDetailResponse(product, relatedProducts);
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(404).body("Product not found");
+        }
 	}
 	
 	@GetMapping(path = "/newproduct")
