@@ -50,23 +50,6 @@ public class OrderController {
 	@Autowired
 	UserServiceClient userServiceClient;
 	
-	@PostMapping
-	@ResponseStatus(HttpStatus.CREATED)
-	@CircuitBreaker(name="user",fallbackMethod = "fallbackMethod")
-	@TimeLimiter(name="user")
-	public CompletableFuture<String> CreateOrder(@RequestBody OrderRequest orderRequest) {
-		 return CompletableFuture.supplyAsync(() ->orderService.createOrder(orderRequest));
-
-	}
-	public CompletableFuture<String> fallbackMethod(OrderRequest orderRequest,RuntimeException runtimeException) {
-		return CompletableFuture.supplyAsync(() -> "Oops, đã có lỗi xảy ra, vui lòng order lại sau!");
-	}
-	@GetMapping
-	@ResponseStatus(HttpStatus.OK)
-	public List<OrderResponse> GetAllOrder() {
-		return orderService.getAllOrder();
-	}
-	
 	//Main
 	
 	@Autowired
@@ -205,18 +188,14 @@ public class OrderController {
 			return new ResponseEntity<>(listOrderDto, HttpStatus.OK);}
 	   
 	   
-	   @PatchMapping(path = "/order/updateStatus/{orderId}")
+	   @PostMapping(path = "/order/updateStatus/{orderId}")
 		public ResponseEntity<OrderDto> updateOrderStatus(@PathVariable("orderId") int orderId, String newStatus) {
 		    Order orderToUpdate = orderService.findById(orderId);
 		    if (orderToUpdate == null) {
 		        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		    }
-		    
-		    // Cập nhật trạng thái đơn hàng
 		    orderToUpdate.setStatus(newStatus);
 		    Order updatedOrder = orderService.saveOrder(orderToUpdate);
-		    
-		    // Chuyển đổi đơn hàng đã cập nhật thành DTO để trả về cho client
 		    OrderDto updatedOrderDto = modelMapper.map(updatedOrder, OrderDto.class);
 		    
 		    return new ResponseEntity<>(updatedOrderDto, HttpStatus.OK);

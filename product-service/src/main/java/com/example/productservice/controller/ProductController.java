@@ -234,7 +234,6 @@ public class ProductController {
                  } else {
                      return ResponseEntity.badRequest().build();
                  }
-                // Cập nhật thông tin sản phẩm
                 product.setProduct_Name(product_name);
                 product.setPrice(Integer.parseInt(product_price));
                 product.setQuantity(Integer.parseInt(product_quantity));
@@ -250,8 +249,6 @@ public class ProductController {
                 	productImage1.setProduct(product);
                     productImageService.save(productImage1);
                 }
-
-                // Lưu sản phẩm và hình ảnh sản phẩm
                
                 for (ProductImage productImage : productImages) {
                     productImageService.save(productImage);
@@ -294,7 +291,6 @@ public class ProductController {
 	}
 	@GetMapping(path = "/product-statistic")
   public ResponseEntity<List<ReportTotal>> ProductStatistic() {
-          // Gọi phương thức để thực hiện xử lý với các đối tượng Date này
           List<Object[]> results = productService.findProductStatistic();
           List<ReportTotal> reportTotals = new ArrayList<>();
           for (Object[] result : results) {
@@ -310,7 +306,6 @@ public class ProductController {
   }
 	@GetMapping(path = "/unit-of-product-statistic")
   public ResponseEntity<List<ReportTotal>> UnitOfProductStatistic() {
-          // Gọi phương thức để thực hiện xử lý với các đối tượng Date này
           List<Object[]> results = productService.findUnitOfProductStatistic();
           List<ReportTotal> reportTotals = new ArrayList<>();
           for (Object[] result : results) {

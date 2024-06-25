@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 @Entity
-@Data // lombok giúp generate các hàm constructor, get, set v.v.
+@Data 
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "order_item")

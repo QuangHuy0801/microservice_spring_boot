@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/itstatis" android:title="Thống kê" android:icon="@drawable/statistical"/>
-    <item android:id="@+id/itinventory" android:title="Kho" android:icon="@drawable/icon_inventory"/>
-    <item android:id="@+id/itRQOrder" android:title="Order" android:icon="@drawable/icon_rqorder"/>
-    <item android:id="@+id/itIFAdmin" android:title="Admin" android:icon="@drawable/icon_user"/>
-</menu>
